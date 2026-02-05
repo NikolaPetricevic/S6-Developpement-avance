@@ -66,6 +66,9 @@
         <i class="fas fa-plus me-2"></i> Add an item
     </a>
 
+    <a href="logout" class="btn btn-outline-danger">
+        <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+    </a>
 </div>
 
 </body>

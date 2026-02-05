@@ -1,4 +1,4 @@
-package com.todolist.todolist.annonceAdd;
+package com.todolist.todolist.servlets;
 
 import com.todolist.todolist.dao.Annonce;
 import com.todolist.todolist.dao.AnnonceDAO;
