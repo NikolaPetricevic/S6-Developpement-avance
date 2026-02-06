@@ -10,7 +10,14 @@ import java.util.List;
 @Repository
 public class CategoryRepository {
 
-    public List<Category> findAll(int page, int size) {
+    public List<Category> findAll() {
+        try (EntityManager em = JPAUtil.getEntityManager()) {
+            return em.createQuery("SELECT c FROM Category c ORDER BY c.id", Category.class)
+                    .getResultList();
+        }
+    }
+
+    public List<Category> findAllByPage(int page, int size) {
         try (EntityManager em = JPAUtil.getEntityManager()) {
             return em.createQuery("SELECT c FROM Category c ORDER BY c.id", Category.class)
                     .setFirstResult(page * size)
@@ -19,8 +26,8 @@ public class CategoryRepository {
         }
     }
 
-    public List<Category> findAll(int page) {
-        return findAll(page, 20);
+    public List<Category> findAllByPage(int page) {
+        return findAllByPage(page, 20);
     }
 
     public Category findOne(Long id) {

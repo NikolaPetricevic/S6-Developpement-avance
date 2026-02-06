@@ -1,6 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.todolist.todolist.dao.Annonce" %>
+<%@ page import="com.todolist.todolist.enums.StatusEnum" %>
+<%@ page import="com.todolist.todolist.entities.Annonce" %>
+<%@ page import="com.todolist.todolist.entities.Category" %>
+<%@ page import="com.todolist.todolist.entities.User" %>
 
 <!DOCTYPE html>
 <html>
@@ -20,37 +23,121 @@
             overflow: hidden;
             background: white;
         }
+        .pagination {
+            margin-top: 20px;
+        }
+        .search-wrapper {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body class="bg-light p-4">
 
 <div class="container">
 
+    <div class="search-wrapper">
+        <form method="get" action="annonce-list" class="row g-3">
+            <div class="col-md-4">
+                <label for="keyword" class="form-label">Rechercher</label>
+                <input type="text"
+                       class="form-control"
+                       id="keyword"
+                       name="keyword"
+                       placeholder="Rechercher par titre ou description..."
+                       value="<%= request.getAttribute("keyword") != null ? request.getAttribute("keyword") : "" %>">
+            </div>
+            <div class="col-md-3">
+                <label for="status" class="form-label">Statut</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="">Tous les statuts</option>
+                    <%
+                        String selectedStatus = (String) request.getAttribute("status");
+                        for (StatusEnum s : StatusEnum.values()) {
+                            String selected = (selectedStatus != null && selectedStatus.equals(s.name())) ? "selected" : "";
+                    %>
+                    <option value="<%= s.name() %>" <%= selected %>><%= s.name() %></option>
+                    <%
+                        }
+                    %>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="categoryId" class="form-label">Catégorie</label>
+                <select class="form-select" id="categoryId" name="categoryId">
+                    <option value="">Toutes les catégories</option>
+                    <%
+                        List<Category> categories = (List<Category>) request.getAttribute("categories");
+                        String selectedCategoryId = (String) request.getAttribute("categoryId");
+                        if (categories != null) {
+                            for (Category cat : categories) {
+                                String selected = (selectedCategoryId != null && selectedCategoryId.equals(cat.getId().toString())) ? "selected" : "";
+                    %>
+                    <option value="<%= cat.getId() %>" <%= selected %>><%= cat.getLabel() %></option>
+                    <%
+                            }
+                        }
+                    %>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-2"></i>Rechercher
+                </button>
+            </div>
+            <%
+                String keyword = (String) request.getAttribute("keyword");
+                String status = (String) request.getAttribute("status");
+                String categoryId = (String) request.getAttribute("categoryId");
+                if ((keyword != null && !keyword.isEmpty()) || (status != null && !status.isEmpty()) || (categoryId != null && !categoryId.isEmpty())) {
+            %>
+            <div class="col-12">
+                <a href="annonce-list" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-times me-2"></i>Effacer les filtres
+                </a>
+            </div>
+            <% } %>
+        </form>
+    </div>
+
     <div class="list-wrapper mb-3">
         <div class="list-group list-group-flush">
 
             <%
                 List<Annonce> list = (List<Annonce>) request.getAttribute("annonces");
+                Integer currentPage = (Integer) request.getAttribute("currentPage");
+                Integer totalPages = (Integer) request.getAttribute("totalPages");
+                User currentUser = (User) session.getAttribute("loggedUser");
 
-                if (list != null) {
+                if (list != null && !list.isEmpty()) {
                     for (Annonce a : list) {
+                        boolean isOwner = currentUser != null && a.getAuthor() != null && currentUser.getId().equals(a.getAuthor().getId());
             %>
 
-            <a  href="annonce-update?id=<%= a.getId() %>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+            <div class="list-group-item d-flex justify-content-between align-items-center py-3">
 
-                <div class="text-truncate me-3">
+                <div class="text-truncate me-3 flex-grow-1">
                     <span class="fw-normal"><%= a.getTitle() %></span>
                     <span class="text-muted"> (<%= a.getMail() %>)</span>
                 </div>
 
-
                 <div class="d-flex align-items-center text-muted" style="white-space: nowrap;">
-                        <span class="small me-3">
-                            <%= a.getDate() %>
-                        </span>
+                    <span class="small me-3">
+                        <%= a.getDate() %>
+                    </span>
+
+                    <% if (isOwner) { %>
+                    <a href="annonce-update?id=<%= a.getId() %>" class="btn btn-sm btn-outline-primary me-2">
+                        <i class="fas fa-edit me-1"></i>Modifier
+                    </a>
+                    <% } %>
+
                     <i class="fas fa-chevron-right"></i>
                 </div>
-            </a>
+            </div>
 
             <%
                 }
@@ -61,6 +148,82 @@
 
         </div>
     </div>
+
+    <%
+        if (totalPages != null) {
+            StringBuilder params = new StringBuilder();
+
+            if (keyword != null && !keyword.isEmpty()) {
+                params.append("&keyword=").append(keyword);
+            }
+            if (status != null && !status.isEmpty()) {
+                params.append("&status=").append(status);
+            }
+            if (categoryId != null && !categoryId.isEmpty()) {
+                params.append("&categoryId=").append(categoryId);
+            }
+
+            String urlParams = params.toString();
+    %>
+    <nav aria-label="Pagination des annonces">
+        <ul class="pagination justify-content-center">
+            <li class="page-item <%= (currentPage == 0) ? "disabled" : "" %>">
+                <a class="page-link" href="?page=<%= currentPage - 1 %><%= urlParams %>" aria-label="Précédent">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <%
+                int startPage = Math.max(0, currentPage - 2);
+                int endPage = Math.min(totalPages - 1, currentPage + 2);
+
+                if (startPage > 0) {
+            %>
+            <li class="page-item">
+                <a class="page-link" href="?page=0<%= urlParams %>">1</a>
+            </li>
+            <%
+                if (startPage > 1) {
+            %>
+            <li class="page-item disabled">
+                <span class="page-link">...</span>
+            </li>
+            <%
+                    }
+                }
+
+                for (int i = startPage; i <= endPage; i++) {
+            %>
+            <li class="page-item <%= (i == currentPage) ? "active" : "" %>">
+                <a class="page-link" href="?page=<%= i %><%= urlParams %>"><%= i + 1 %></a>
+            </li>
+            <%
+                }
+
+                if (endPage < totalPages - 1) {
+                    if (endPage < totalPages - 2) {
+            %>
+            <li class="page-item disabled">
+                <span class="page-link">...</span>
+            </li>
+            <%
+                }
+            %>
+            <li class="page-item">
+                <a class="page-link" href="?page=<%= totalPages - 1 %><%= urlParams %>"><%= totalPages %></a>
+            </li>
+            <%
+                }
+            %>
+
+            <li class="page-item <%= (currentPage >= totalPages - 1) ? "disabled" : "" %>">
+                <a class="page-link" href="?page=<%= currentPage + 1 %><%= urlParams %>" aria-label="Suivant">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <% } %>
 
     <a href="annonce-add" class="btn btn-outline-secondary d-inline-flex align-items-center">
         <i class="fas fa-plus me-2"></i> Add an item

@@ -4,6 +4,7 @@ import com.todolist.todolist.database.JPAUtil;
 import com.todolist.todolist.entities.Annonce;
 import com.todolist.todolist.enums.StatusEnum;
 import com.todolist.todolist.repositories.AnnonceRepository;
+import com.todolist.todolist.utils.annonce.AnnonceSearchCriteria;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import org.springframework.stereotype.Service;
@@ -19,20 +20,12 @@ public class AnnonceService {
         this.annonceRepository = new AnnonceRepository();
     }
 
-    public List<Annonce> findAll(int page, int size) {
-        return annonceRepository.findAll(page, size);
+    public List<Annonce> findByCriteria(AnnonceSearchCriteria criteria, int page, int size) {
+        return annonceRepository.findByCriteria(criteria, page, size);
     }
 
-    public List<Annonce> findByKeyword(String keyword, int page, int size) {
-        return annonceRepository.findByKeyword(keyword, page, size);
-    }
-
-    public List<Annonce> findByCategory(Long categoryId, int page, int size) {
-        return annonceRepository.findByCategory(categoryId, page, size);
-    }
-
-    public List<Annonce> findByStatus(StatusEnum status, int page, int size) {
-        return annonceRepository.findByStatus(status, page, size);
+    public long countByCriteria(AnnonceSearchCriteria criteria) {
+        return annonceRepository.countByCriteria(criteria);
     }
 
     public Annonce findOne(Long id) {
