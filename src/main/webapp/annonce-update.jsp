@@ -1,5 +1,5 @@
-<%@ page import="com.todolist.todolist.entities.Annonce" %>
-<%@ page import="com.todolist.todolist.entities.Category" %>
+<%@ page import="com.todolist.todolist.annonces.entity.Annonce" %>
+<%@ page import="com.todolist.todolist.categories.entity.Category" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>

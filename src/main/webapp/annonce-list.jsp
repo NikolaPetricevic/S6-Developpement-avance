@@ -1,9 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.todolist.todolist.enums.StatusEnum" %>
-<%@ page import="com.todolist.todolist.entities.Annonce" %>
-<%@ page import="com.todolist.todolist.entities.Category" %>
-<%@ page import="com.todolist.todolist.entities.User" %>
+<%@ page import="com.todolist.todolist.annonces.enums.StatusEnum" %>
+<%@ page import="com.todolist.todolist.annonces.entity.Annonce" %>
+<%@ page import="com.todolist.todolist.categories.entity.Category" %>
+<%@ page import="com.todolist.todolist.users.entity.User" %>
 
 <!DOCTYPE html>
 <html>
@@ -117,25 +117,64 @@
                         boolean isOwner = currentUser != null && a.getAuthor() != null && currentUser.getId().equals(a.getAuthor().getId());
             %>
 
-            <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+            <div class="list-group-item list-group-item-action py-3" style="cursor: pointer;" onclick="window.location.href='annonce-detail?id=<%= a.getId() %>'">
 
-                <div class="text-truncate me-3 flex-grow-1">
-                    <span class="fw-normal"><%= a.getTitle() %></span>
-                    <span class="text-muted"> (<%= a.getMail() %>)</span>
-                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-truncate me-3 flex-grow-1">
+                        <span class="fw-normal text-dark"><%= a.getTitle() %></span>
+                        <span class="text-muted"> (<%= a.getMail() %>)</span>
 
-                <div class="d-flex align-items-center text-muted" style="white-space: nowrap;">
-                    <span class="small me-3">
-                        <%= a.getDate() %>
-                    </span>
+                        <% if (a.getStatus() != null) {
+                            String badgeClass = "";
+                            switch (a.getStatus()) {
+                                case PUBLISHED:
+                                    badgeClass = "bg-success";
+                                    break;
+                                case DRAFT:
+                                    badgeClass = "bg-warning text-dark";
+                                    break;
+                                case ARCHIVED:
+                                    badgeClass = "bg-secondary";
+                                    break;
+                            }
+                        %>
+                        <span class="badge <%= badgeClass %> ms-2"><%= a.getStatus().name() %></span>
+                        <% } %>
+                    </div>
 
-                    <% if (isOwner) { %>
-                    <a href="annonce-update?id=<%= a.getId() %>" class="btn btn-sm btn-outline-primary me-2">
-                        <i class="fas fa-edit me-1"></i>Modifier
-                    </a>
-                    <% } %>
+                    <div class="d-flex align-items-center text-muted gap-2" style="white-space: nowrap;">
+                        <span class="small">
+                            <%= a.getDate() %>
+                        </span>
 
-                    <i class="fas fa-chevron-right"></i>
+                        <% if (isOwner) { %>
+                        <% if (a.getStatus() == StatusEnum.DRAFT) { %>
+                        <a href="annonce-publish?id=<%= a.getId() %>"
+                           class="btn btn-sm btn-success"
+                           onclick="event.stopPropagation();"
+                           title="Publier cette annonce">
+                            <i class="fas fa-upload me-1"></i>Publier
+                        </a>
+                        <% } %>
+
+                        <% if (a.getStatus() == StatusEnum.PUBLISHED) { %>
+                        <a href="annonce-archive?id=<%= a.getId() %>"
+                           class="btn btn-sm btn-secondary"
+                           onclick="event.stopPropagation();"
+                           title="Archiver cette annonce">
+                            <i class="fas fa-archive me-1"></i>Archiver
+                        </a>
+                        <% } %>
+
+                        <a href="annonce-update?id=<%= a.getId() %>"
+                           class="btn btn-sm btn-outline-primary"
+                           onclick="event.stopPropagation();">
+                            <i class="fas fa-edit me-1"></i>Modifier
+                        </a>
+                        <% } %>
+
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
                 </div>
             </div>
 
@@ -226,7 +265,7 @@
     <% } %>
 
     <a href="annonce-add" class="btn btn-outline-secondary d-inline-flex align-items-center">
-        <i class="fas fa-plus me-2"></i> Add an item
+        <i class="fas fa-plus me-2"></i> Ajouter une annonce
     </a>
 
     <a href="logout" class="btn btn-outline-danger">
