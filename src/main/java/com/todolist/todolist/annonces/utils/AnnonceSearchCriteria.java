@@ -15,7 +15,6 @@ public class AnnonceSearchCriteria {
     private StatusEnum status;
     private Long categoryId;
     private Long authorId;
-    // Vous pouvez ajouter d'autres critères facilement
 
     public boolean hasKeyword() {
         return keyword != null && !keyword.trim().isEmpty();

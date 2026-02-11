@@ -21,15 +21,15 @@ public class AnnonceService {
     }
 
     public List<Annonce> findByCriteria(AnnonceSearchCriteria criteria, int page, int size) {
-        return annonceRepository.findByCriteria(criteria, page, size);
+        return annonceRepository.findByCriteria(JPAUtil.getEntityManager(), criteria, page, size);
     }
 
     public long countByCriteria(AnnonceSearchCriteria criteria) {
-        return annonceRepository.countByCriteria(criteria);
+        return annonceRepository.countByCriteria(JPAUtil.getEntityManager(), criteria);
     }
 
     public Annonce findOne(Long id) {
-        return annonceRepository.findOne(id);
+        return annonceRepository.findOne(JPAUtil.getEntityManager() ,id);
     }
 
     public Annonce createAnnonce(Annonce annonce) {

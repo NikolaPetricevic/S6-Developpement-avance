@@ -8,7 +8,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebFilter(urlPatterns = {"/annonce-list", "/annonce-add", "/annonce-update", "/annonce-detail"})
+@WebFilter(urlPatterns = {
+        "/annonce-list",
+        "/annonce-add",
+        "/annonce-update",
+        "/annonce-detail"})
 public class AuthFilter implements Filter {
 
     private final AuthService authService = new AuthService();

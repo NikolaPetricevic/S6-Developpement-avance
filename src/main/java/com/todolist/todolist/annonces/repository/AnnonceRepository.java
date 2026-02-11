@@ -16,8 +16,7 @@ import java.util.Map;
 public class AnnonceRepository {
 
     //REMPLACE LE findAll() QU'ON AURAIT DE BASE POUR PERMETTRE D'UTILISER DES FILTRES SANS TROP ENCOMBRER LE CODE
-    public List<Annonce> findByCriteria(AnnonceSearchCriteria criteria, int page, int size) {
-        try (EntityManager em = JPAUtil.getEntityManager()) {
+    public List<Annonce> findByCriteria(EntityManager em, AnnonceSearchCriteria criteria, int page, int size) {
             QueryBuilder queryBuilder = buildQuery(criteria, false);
 
             TypedQuery<Annonce> query = em.createQuery(queryBuilder.getQuery(), Annonce.class);
@@ -27,19 +26,16 @@ public class AnnonceRepository {
                     .setFirstResult(page * size)
                     .setMaxResults(size)
                     .getResultList();
-        }
     }
 
     //PERMET DE COMPTER LE NOMBRE DE LIGNES PAR RAPPORT AUX FILTRES SAISIS
-    public long countByCriteria(AnnonceSearchCriteria criteria) {
-        try (EntityManager em = JPAUtil.getEntityManager()) {
+    public long countByCriteria(EntityManager em, AnnonceSearchCriteria criteria) {
             QueryBuilder queryBuilder = buildQuery(criteria, true);
 
             TypedQuery<Long> query = em.createQuery(queryBuilder.getQuery(), Long.class);
             setParameters(query, queryBuilder.getParameters());
 
             return query.getSingleResult();
-        }
     }
 
     //BUILD LA QUERY SELON LES FILTRES SAISIS
@@ -94,10 +90,8 @@ public class AnnonceRepository {
         parameters.forEach(query::setParameter);
     }
 
-    public Annonce findOne(Long id) {
-        try (EntityManager em = JPAUtil.getEntityManager()) {
-            return em.find(Annonce.class, id);
-        }
+    public Annonce findOne(EntityManager em, Long id) {
+        return em.find(Annonce.class, id);
     }
 
     public Annonce create(EntityManager em, Annonce annonce) {
