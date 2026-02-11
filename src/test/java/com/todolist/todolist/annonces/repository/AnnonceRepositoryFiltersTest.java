@@ -1,7 +1,6 @@
-package com.todolist.todolist.annonces;
+package com.todolist.todolist.annonces.repository;
 
 import com.todolist.todolist.annonces.entity.Annonce;
-import com.todolist.todolist.annonces.repository.AnnonceRepository;
 import com.todolist.todolist.annonces.utils.AnnonceSearchCriteria;
 import com.todolist.todolist.categories.entity.Category;
 import com.todolist.todolist.users.entity.User;

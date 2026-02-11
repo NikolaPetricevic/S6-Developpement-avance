@@ -20,6 +20,13 @@ public class JPAUtil {
     }
 
     /**
+     * Récupère l'EntityManagerFactory.
+     */
+    public static EntityManagerFactory getEntityManagerFactory() {
+        return factory;
+    }
+
+    /**
      * Récupère une nouvelle instance d'EntityManager.
      * À appeler au début d'une méthode ou d'une requête.
      */

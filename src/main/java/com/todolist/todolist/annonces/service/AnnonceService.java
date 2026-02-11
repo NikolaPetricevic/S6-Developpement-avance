@@ -6,6 +6,7 @@ import com.todolist.todolist.annonces.repository.AnnonceRepository;
 import com.todolist.todolist.database.JPAUtil;
 import com.todolist.todolist.annonces.enums.StatusEnum;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import org.springframework.stereotype.Service;
 
@@ -15,25 +16,49 @@ import java.util.List;
 public class AnnonceService {
 
     private final AnnonceRepository annonceRepository;
+    private final EntityManagerFactory entityManagerFactory;
 
+    // Constructeur par défaut pour la production
     public AnnonceService() {
         this.annonceRepository = new AnnonceRepository();
+        this.entityManagerFactory = JPAUtil.getEntityManagerFactory();
+    }
+
+    // Constructeur pour les tests (injection de dépendances)
+    public AnnonceService(EntityManagerFactory entityManagerFactory) {
+        this.annonceRepository = new AnnonceRepository();
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     public List<Annonce> findByCriteria(AnnonceSearchCriteria criteria, int page, int size) {
-        return annonceRepository.findByCriteria(JPAUtil.getEntityManager(), criteria, page, size);
+        EntityManager em = entityManagerFactory.createEntityManager();
+        try {
+            return annonceRepository.findByCriteria(em, criteria, page, size);
+        } finally {
+            em.close();
+        }
     }
 
     public long countByCriteria(AnnonceSearchCriteria criteria) {
-        return annonceRepository.countByCriteria(JPAUtil.getEntityManager(), criteria);
+        EntityManager em = entityManagerFactory.createEntityManager();
+        try {
+            return annonceRepository.countByCriteria(em, criteria);
+        } finally {
+            em.close();
+        }
     }
 
     public Annonce findOne(Long id) {
-        return annonceRepository.findOne(JPAUtil.getEntityManager() ,id);
+        EntityManager em = entityManagerFactory.createEntityManager();
+        try {
+            return annonceRepository.findOne(em, id);
+        } finally {
+            em.close();
+        }
     }
 
     public Annonce createAnnonce(Annonce annonce) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
 
@@ -50,7 +75,7 @@ public class AnnonceService {
     }
 
     public Annonce updateAnnonce(Annonce annonce) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
 
@@ -67,7 +92,7 @@ public class AnnonceService {
     }
 
     public void deleteAnnonce(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
 
@@ -91,5 +116,4 @@ public class AnnonceService {
         annonce.setStatus(StatusEnum.ARCHIVED);
         return this.updateAnnonce(annonce);
     }
-
 }
