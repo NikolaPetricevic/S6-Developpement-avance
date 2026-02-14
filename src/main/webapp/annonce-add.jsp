@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.todolist.todolist.categories.entity.Category" %>
+<%@ page import="com.todolist.todolist.features.categories.entity.Category" %>
 <html>
 <head>
     <title>Ajouter une annonce</title>

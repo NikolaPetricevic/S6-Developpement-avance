@@ -6,9 +6,9 @@
     <persistence-unit name="testUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <class>com.todolist.todolist.users.entity.User</class>
-        <class>com.todolist.todolist.categories.entity.Category</class>
-        <class>com.todolist.todolist.annonces.entity.Annonce</class>
+        <class>com.todolist.todolist.features.users.entity.User</class>
+        <class>com.todolist.todolist.features.categories.entity.Category</class>
+        <class>com.todolist.todolist.features.annonces.entity.Annonce</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver" />

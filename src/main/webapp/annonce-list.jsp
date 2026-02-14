@@ -1,9 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.todolist.todolist.annonces.enums.StatusEnum" %>
-<%@ page import="com.todolist.todolist.annonces.entity.Annonce" %>
-<%@ page import="com.todolist.todolist.categories.entity.Category" %>
-<%@ page import="com.todolist.todolist.users.entity.User" %>
+<%@ page import="com.todolist.todolist.features.annonces.enums.StatusEnum" %>
+<%@ page import="com.todolist.todolist.features.annonces.entity.Annonce" %>
+<%@ page import="com.todolist.todolist.features.categories.entity.Category" %>
+<%@ page import="com.todolist.todolist.features.users.entity.User" %>
 
 <!DOCTYPE html>
 <html>
