@@ -1,39 +1,86 @@
 package com.todolist.todolist.features.auth.service;
 
+import com.todolist.todolist.features.auth.dto.LoginDTO;
 import com.todolist.todolist.features.users.entity.User;
 import com.todolist.todolist.features.users.repository.UserRepository;
-import jakarta.servlet.http.HttpSession;
+
+
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AuthService {
 
     private final UserRepository userRepository;
-    private static final String SESSION_USER_KEY = "loggedUser";
+
+    private static final Map<String, Long> tokenMap = new ConcurrentHashMap<>();
+
+    private static final Map<String, LocalDateTime> tokenExpiration = new ConcurrentHashMap<>();
+
+    private static final int TOKEN_VALIDITY_HOURS = 1;
 
     public AuthService() {
         this.userRepository = new UserRepository();
     }
 
-    public User login(String username, String password, HttpSession session) {
+    public LoginDTO login(String username, String password) {
         User user = userRepository.findByUsername(username);
 
         if (user != null && user.getPassword().equals(password)) {
-            session.setAttribute(SESSION_USER_KEY, user);
-            return user;
+            String token = generateToken();
+
+            tokenMap.put(token, user.getId());
+            tokenExpiration.put(token, LocalDateTime.now().plusHours(TOKEN_VALIDITY_HOURS));
+
+            return LoginDTO.builder()
+                    .token(token)
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .build();
         }
 
         return null;
     }
 
-    public void logout(HttpSession session) {
-        session.invalidate();
+    public User getCurrentUser(String token) {
+        if (!isValidToken(token)) {
+            return null;
+        }
+
+        Long userId = tokenMap.get(token);
+        if (userId != null) {
+            return userRepository.findOne(userId);
+        }
+
+        return null;
     }
 
-    public User getCurrentUser(HttpSession session) {
-        return (User) session.getAttribute(SESSION_USER_KEY);
+    public boolean isValidToken(String token) {
+        if (token == null || !tokenMap.containsKey(token)) {
+            return false;
+        }
+
+        LocalDateTime expiration = tokenExpiration.get(token);
+        if (expiration == null || LocalDateTime.now().isAfter(expiration)) {
+            tokenMap.remove(token);
+            tokenExpiration.remove(token);
+            return false;
+        }
+
+        return true;
     }
 
-    public boolean isLoggedIn(HttpSession session) {
-        return session.getAttribute(SESSION_USER_KEY) != null;
+    private String generateToken() {
+        return UUID.randomUUID().toString() + "-" + System.currentTimeMillis();
+    }
+
+    public String extractToken(String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return null;
     }
 
 }

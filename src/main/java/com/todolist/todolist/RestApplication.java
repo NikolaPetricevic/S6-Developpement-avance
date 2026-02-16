@@ -4,6 +4,7 @@ import com.todolist.todolist.exceptions.mappers.GenericExceptionMapper;
 import com.todolist.todolist.features.annonces.controller.AnnonceController;
 import com.todolist.todolist.exceptions.mappers.ValidationExceptionMapper;
 import com.todolist.todolist.exceptions.mappers.ResourceNotFoundExceptionMapper;
+import com.todolist.todolist.features.auth.controller.AuthController;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -39,6 +40,7 @@ public class RestApplication extends Application {
 
         classes.add(HelloWorldController.class);
         classes.add(AnnonceController.class);
+        classes.add(AuthController.class);
 
         classes.add(ValidationExceptionMapper.class);
         classes.add(ResourceNotFoundExceptionMapper.class);

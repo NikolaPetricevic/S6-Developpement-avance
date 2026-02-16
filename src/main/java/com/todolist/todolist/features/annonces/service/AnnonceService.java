@@ -3,6 +3,7 @@ package com.todolist.todolist.features.annonces.service;
 import com.todolist.todolist.exceptions.ResourceNotFoundException;
 import com.todolist.todolist.features.annonces.dto.AnnonceDTO;
 import com.todolist.todolist.features.annonces.enums.StatusEnum;
+import com.todolist.todolist.features.annonces.exceptions.NotArchivedException;
 import com.todolist.todolist.features.annonces.mapper.AnnonceMapper;
 import com.todolist.todolist.features.annonces.entity.Annonce;
 import com.todolist.todolist.features.annonces.repository.AnnonceRepository;
@@ -15,6 +16,7 @@ import com.todolist.todolist.utils.PaginatedResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
+import jakarta.ws.rs.ForbiddenException;
 
 
 import java.sql.Timestamp;
@@ -108,7 +110,7 @@ public class AnnonceService {
         }
     }
 
-    public AnnonceDTO updateAnnonce(Long id, AnnonceDTO annonceDTO) {
+    public AnnonceDTO updateAnnonce(Long id, AnnonceDTO annonceDTO, Long currentUserId) {
         EntityManager em = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
@@ -119,27 +121,37 @@ public class AnnonceService {
                 throw new ResourceNotFoundException("Annonce", id);
             }
 
-            existingAnnonce.setTitle(annonceDTO.getTitle());
-            existingAnnonce.setDescription(annonceDTO.getDescription());
-            existingAnnonce.setAdress(annonceDTO.getAdress());
-            existingAnnonce.setMail(annonceDTO.getMail());
+            if (!existingAnnonce.getAuthor().getId().equals(currentUserId)) {
+                throw new ForbiddenException("You are not allowed to update this annonce");
+            }
+
+            // Permet de n'autoriser la modification seulement si l'annonce est en DRAFT
+            if(existingAnnonce.getStatus() == StatusEnum.DRAFT) {
+                existingAnnonce.setTitle(annonceDTO.getTitle());
+                existingAnnonce.setDescription(annonceDTO.getDescription());
+                existingAnnonce.setAdress(annonceDTO.getAdress());
+                existingAnnonce.setMail(annonceDTO.getMail());
+
+                if (annonceDTO.getAuthor_id() != null) {
+                    User author = userRepository.findOne(annonceDTO.getAuthor_id());
+                    if (author == null) {
+                        throw new ResourceNotFoundException("User", annonceDTO.getAuthor_id());
+                    }
+                    existingAnnonce.setAuthor(author);
+                }
+
+                if (annonceDTO.getCategory_id() != null) {
+                    Category category = categoryRepository.findOne(annonceDTO.getCategory_id());
+                    if (category == null) {
+                        throw new ResourceNotFoundException("Category", annonceDTO.getCategory_id());
+                    }
+                    existingAnnonce.setCategory(category);
+                }
+
+            }
+
+            // On autorise la modification du statut dans tous les cas
             existingAnnonce.setStatus(annonceDTO.getStatus());
-
-            if (annonceDTO.getAuthor_id() != null) {
-                User author = userRepository.findOne(annonceDTO.getAuthor_id());
-                if (author == null) {
-                    throw new ResourceNotFoundException("User", annonceDTO.getAuthor_id());
-                }
-                existingAnnonce.setAuthor(author);
-            }
-
-            if (annonceDTO.getCategory_id() != null) {
-                Category category = categoryRepository.findOne(annonceDTO.getCategory_id());
-                if (category == null) {
-                    throw new ResourceNotFoundException("Category", annonceDTO.getCategory_id());
-                }
-                existingAnnonce.setCategory(category);
-            }
 
             Annonce updatedAnnonce = annonceRepository.update(em, existingAnnonce);
 
@@ -154,7 +166,7 @@ public class AnnonceService {
         }
     }
 
-    public void deleteAnnonce(Long id) {
+    public void deleteAnnonce(Long id, Long currentUserId) {
         EntityManager em = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
@@ -163,6 +175,14 @@ public class AnnonceService {
             Annonce existingAnnonce = annonceRepository.findOne(em, id);
             if (existingAnnonce == null) {
                 throw new ResourceNotFoundException("Annonce", id);
+            }
+
+            if (!existingAnnonce.getAuthor().getId().equals(currentUserId)) {
+                throw new ForbiddenException("You are not allowed to delete this annonce");
+            }
+
+            if (existingAnnonce.getStatus() != StatusEnum.ARCHIVED) {
+                throw new NotArchivedException("The annonce is not archived.");
             }
 
             annonceRepository.delete(em, id);
