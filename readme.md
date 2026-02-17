@@ -31,6 +31,9 @@ src
 └── test
     ├── java
     │   └── com.todolist.todolist.annonces
+    │       ├── AnnonceRepositoryTest
+    │       ├── AnnonceServiceTest
+    │       └── AnnonceControllerTest
     └── resources
         └── META-INF -> persistence.xml (pour les tests)
 ```
@@ -45,4 +48,4 @@ Je suis donc parti sur ce choix.
 ## INFOS
 - Documentation Swagger disponible à cette URL : http://localhost:8080/ToDoList/swagger-ui.html 
 - Comme le sujet ne parlait pas de JWT, mais d'un "token simple", je n'ai pas utilisé de librairie particulière pour avoir un JWT.
-- Je n'ai pas réussi à faire fonctionner le logging pour qu'il écrive dans un fichier. Il n'y a que des output sur le terminal.
+- Le logging écrit dans la console pendant les tests, et dans un fichier de log lorsqu'on lance les tests

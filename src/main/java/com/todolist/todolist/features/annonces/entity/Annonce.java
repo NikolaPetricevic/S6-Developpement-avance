@@ -11,57 +11,57 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
-@Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class Annonce {
+    @Entity
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public class Annonce {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    @Version
-    private Long version;
+        @Version
+        private Long version;
 
-    @Column(nullable = false, length = 64)
-    private String title;
+        @Column(nullable = false, length = 64)
+        private String title;
 
-    @Column(nullable = false, length = 256)
-    private String description;
+        @Column(nullable = false, length = 256)
+        private String description;
 
-    @Column(nullable = false, length = 64)
-    private String adress;
+        @Column(nullable = false, length = 64)
+        private String adress;
 
-    @Column(length = 64)
-    private String mail;
+        @Column(length = 64)
+        private String mail;
 
-    private Timestamp date;
+        private Timestamp date;
 
-    @Enumerated(EnumType.STRING)
-    private StatusEnum status;
+        @Enumerated(EnumType.STRING)
+        private StatusEnum status;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "author_id")
-    private User author;
+        @ManyToOne(fetch = FetchType.EAGER)
+        @JoinColumn(name = "author_id")
+        private User author;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
-    private Category category;
+        @ManyToOne(fetch = FetchType.EAGER)
+        @JoinColumn(name = "category_id")
+        private Category category;
 
-    @Override
-    public String toString() {
-        return "Annonce{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", adress='" + adress + '\'' +
-                ", mail='" + mail + '\'' +
-                ", date=" + date +
-                ", status=" + status +
-                ", author_id=" + author.getId() +
-                ", category_id=" + category.getId() +
-                '}';
+        @Override
+        public String toString() {
+            return "Annonce{" +
+                    "id=" + id +
+                    ", title='" + title + '\'' +
+                    ", description='" + description + '\'' +
+                    ", adress='" + adress + '\'' +
+                    ", mail='" + mail + '\'' +
+                    ", date=" + date +
+                    ", status=" + status +
+                    ", author_id=" + author.getId() +
+                    ", category_id=" + category.getId() +
+                    '}';
+        }
     }
-}

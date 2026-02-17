@@ -39,6 +39,16 @@ public class AnnonceService {
         this.categoryRepository = new CategoryRepository();
     }
 
+    public AnnonceService(AnnonceRepository annonceRepository,
+                          EntityManagerFactory entityManagerFactory,
+                          UserRepository userRepository,
+                          CategoryRepository categoryRepository) {
+        this.annonceRepository = annonceRepository;
+        this.entityManagerFactory = entityManagerFactory;
+        this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
+    }
+
     public PaginatedResponse<AnnonceDTO> searchAnnonces(String keyword, Long categoryId,
                                                         StatusEnum status, int page, int size) {
         EntityManager em = entityManagerFactory.createEntityManager();
