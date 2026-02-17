@@ -50,4 +50,18 @@ public class Annonce {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @Override
+    public String toString() {
+        return "Annonce{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", adress='" + adress + '\'' +
+                ", mail='" + mail + '\'' +
+                ", date=" + date +
+                ", status=" + status +
+                ", author_id=" + author.getId() +
+                ", category_id=" + category.getId() +
+                '}';
+    }
 }

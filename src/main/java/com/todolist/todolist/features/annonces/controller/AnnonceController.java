@@ -13,9 +13,11 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
+@Slf4j
 @Path("/annonces")
 @SecurityRequirement(name = "bearerAuth")
 public class AnnonceController {
@@ -33,8 +35,11 @@ public class AnnonceController {
             @QueryParam("status") StatusEnum status,
             @Parameter(hidden = true) @HeaderParam("Authorization") String authHeader) {
 
+        log.info("GET /api/annonces");
+
         String token = authService.extractToken(authHeader);
         if (!authService.isValidToken(token)) {
+            log.error("Response : 401 Unauthorized");
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(Map.of("error", "Unauthorized"))
                     .build();
@@ -43,6 +48,7 @@ public class AnnonceController {
         PaginatedResponse<AnnonceDTO> response = this.annonceService.searchAnnonces(
                 keyword, categoryId, status, page, size);
 
+        log.info("Response : 200 OK");
         return Response.ok().entity(response).build();
     }
 
@@ -52,14 +58,19 @@ public class AnnonceController {
     public Response getAnnonce(@PathParam("id") Long id,
                                @Parameter(hidden = true) @HeaderParam("Authorization") String authHeader) {
 
+        log.info("GET /api/annonces/{}", id);
+
         String token = authService.extractToken(authHeader);
         if (!authService.isValidToken(token)) {
+            log.error("Response : 401 Unauthorized");
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(Map.of("error", "Unauthorized"))
                     .build();
         }
 
         AnnonceDTO annonceDTO = this.annonceService.findOne(id);
+
+        log.info("Response : 200 OK");
         return Response.ok().entity(annonceDTO).build();
     }
 
@@ -69,15 +80,20 @@ public class AnnonceController {
     public Response createAnnonce(@Valid AnnonceDTO annonceDTO,
                                   @Parameter(hidden = true) @HeaderParam("Authorization") String authHeader) {
 
+        log.info("POST /api/annonces");
+
         String token = authService.extractToken(authHeader);
         if (!authService.isValidToken(token)) {
+            log.error("Response : 401 Unauthorized");
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(Map.of("error", "Unauthorized"))
                     .build();
         }
 
+
+        log.error("Response : 201 Created");
         AnnonceDTO createdAnnonceDTO = this.annonceService.createAnnonce(annonceDTO);
-        return Response.ok().entity(createdAnnonceDTO).build();
+        return Response.status(Response.Status.CREATED).entity(createdAnnonceDTO).build();
     }
 
     @PUT
@@ -89,10 +105,13 @@ public class AnnonceController {
             @Valid AnnonceDTO annonceDTO,
             @Parameter(hidden = true) @HeaderParam("Authorization") String authHeader) {
 
+        log.info("PUT /api/annonces/{}", id);
+
         String token = authService.extractToken(authHeader);
 
         User currentUser = authService.getCurrentUser(token);
         if (currentUser == null) {
+            log.error("Response : 401 Unauthorized");
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(Map.of("error", "Unauthorized"))
                     .build();
@@ -100,13 +119,17 @@ public class AnnonceController {
 
         try {
             AnnonceDTO updatedAnnonce = this.annonceService.updateAnnonce(id, annonceDTO, currentUser.getId());
+
+            log.info("Response : 200 OK");
             return Response.ok().entity(updatedAnnonce).build();
         } catch (ForbiddenException e) {
+            log.info("Response : 403 Forbidden");
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(Map.of("error", e.getMessage()))
                     .build();
         }
         catch (OptimisticLockException e) {
+            log.info("Response : 409 Conflict");
             return Response.status(Response.Status.CONFLICT)
                     .entity(Map.of("error", "This annonce has been modified by another user"))
                     .build();
@@ -119,10 +142,13 @@ public class AnnonceController {
     public Response deleteAnnonce(@PathParam("id") Long id,
                                   @Parameter(hidden = true) @HeaderParam("Authorization") String authHeader) {
 
+        log.info("DELETE /api/annonces/{}", id);
+
         String token = authService.extractToken(authHeader);
 
         User currentUser = authService.getCurrentUser(token);
         if (currentUser == null) {
+            log.error("Response : 401 Unauthorized");
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(Map.of("error", "Unauthorized"))
                     .build();
@@ -130,8 +156,10 @@ public class AnnonceController {
 
         try {
             this.annonceService.deleteAnnonce(id, currentUser.getId());
+            log.info("Response : 204 No Content");
             return Response.noContent().build();
         } catch (ForbiddenException e) {
+            log.info("Response : 403 Forbidden");
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(Map.of("error", e.getMessage()))
                     .build();

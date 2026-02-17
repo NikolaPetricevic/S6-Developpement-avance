@@ -57,4 +57,19 @@ public class AnnonceDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull(message = "category_id is required")
     private Long category_id;
+
+    @Override
+    public String toString() {
+        return "AnnonceDTO{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", adress='" + adress + '\'' +
+                ", mail='" + mail + '\'' +
+                ", date=" + date +
+                ", status=" + status +
+                ", author_id=" + author_id +
+                ", category_id=" + category_id +
+                '}';
+    }
 }

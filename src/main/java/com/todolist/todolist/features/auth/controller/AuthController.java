@@ -9,9 +9,11 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
+@Slf4j
 @Path("/auth")
 public class AuthController {
 
@@ -22,15 +24,20 @@ public class AuthController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@Valid LoginDTO loginRequest) {
+
+        log.info("GET /api/auth/login");
+
         LoginDTO authResponse = authService.login(
                 loginRequest.getUsername(),
                 loginRequest.getPassword()
         );
 
         if (authResponse != null) {
+            log.info("Response : 200 OK");
             return Response.ok().entity(authResponse).build();
         }
 
+        log.error("Response : 401 Unauthorized");
         return Response.status(Response.Status.UNAUTHORIZED)
                 .entity(Map.of("error", "Invalid credentials"))
                 .build();

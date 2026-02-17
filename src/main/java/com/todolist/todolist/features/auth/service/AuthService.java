@@ -3,6 +3,7 @@ package com.todolist.todolist.features.auth.service;
 import com.todolist.todolist.features.auth.dto.LoginDTO;
 import com.todolist.todolist.features.users.entity.User;
 import com.todolist.todolist.features.users.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -33,6 +35,8 @@ public class AuthService {
             tokenMap.put(token, user.getId());
             tokenExpiration.put(token, LocalDateTime.now().plusHours(TOKEN_VALIDITY_HOURS));
 
+            log.warn("User found, id : {}, name : {}", user.getId(), user.getUsername());
+
             return LoginDTO.builder()
                     .token(token)
                     .id(user.getId())
@@ -40,6 +44,8 @@ public class AuthService {
                     .email(user.getEmail())
                     .build();
         }
+
+        log.warn("User not found");
 
         return null;
     }
