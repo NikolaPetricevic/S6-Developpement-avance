@@ -22,8 +22,18 @@ import java.util.Map;
 @SecurityRequirement(name = "bearerAuth")
 public class AnnonceController {
 
-    private final AnnonceService annonceService = new AnnonceService();
-    private final AuthService authService = new AuthService();
+    private final AnnonceService annonceService;
+    private final AuthService authService;
+
+    public AnnonceController() {
+        this.annonceService = new AnnonceService();
+        this.authService = new AuthService();
+    }
+
+    public AnnonceController(AnnonceService annonceService, AuthService authService) {
+        this.annonceService = annonceService;
+        this.authService = authService;
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

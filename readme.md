@@ -48,4 +48,4 @@ Je suis donc parti sur ce choix.
 ## INFOS
 - Documentation Swagger disponible à cette URL : http://localhost:8080/ToDoList/swagger-ui.html 
 - Comme le sujet ne parlait pas de JWT, mais d'un "token simple", je n'ai pas utilisé de librairie particulière pour avoir un JWT.
-- Le logging écrit dans la console pendant les tests, et dans un fichier de log lorsqu'on lance les tests
+- Le logging écrit dans la console lorsqu'on lance l'application, et dans un fichier de log lorsqu'on lance les tests
