@@ -1,5 +1,6 @@
 package com.todolist.todolist.features.users.entity;
 
+import com.todolist.todolist.features.users.enums.RoleEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +30,9 @@ public class UserEntity {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private RoleEnum role;
 
     @CreationTimestamp
     @Column(name = "created_at")

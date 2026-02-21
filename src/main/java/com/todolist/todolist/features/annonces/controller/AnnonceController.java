@@ -4,6 +4,7 @@ import com.todolist.todolist.features.annonces.dto.AnnonceDTO;
 import com.todolist.todolist.features.annonces.dto.AnnonceFilterDTO;
 import com.todolist.todolist.features.annonces.service.AnnonceService;
 import com.todolist.todolist.features.annonces.utils.AnnonceSortValidator;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/annonces")
 @RequiredArgsConstructor
 @Tag(name = "Annonces")
+@SecurityRequirement(name = "bearerAuth")
 public class AnnonceController {
 
     private final AnnonceService annonceService;

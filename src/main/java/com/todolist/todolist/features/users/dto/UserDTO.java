@@ -1,5 +1,6 @@
 package com.todolist.todolist.features.users.dto;
 
+import com.todolist.todolist.features.users.enums.RoleEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -25,6 +26,8 @@ public class UserDTO {
     @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
     @NotBlank(message = "password is required")
     private String password;
+
+    private RoleEnum role;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDateTime createdAt;

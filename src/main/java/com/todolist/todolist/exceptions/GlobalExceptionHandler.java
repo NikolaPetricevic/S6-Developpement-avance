@@ -1,6 +1,7 @@
 package com.todolist.todolist.exceptions;
 
 import com.todolist.todolist.features.annonces.exceptions.AnnonceException;
+import com.todolist.todolist.features.auth.exceptions.AuthException;
 import com.todolist.todolist.features.categories.exceptions.CategoryException;
 import com.todolist.todolist.features.users.exceptions.UserException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,6 +48,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidSortFieldException.class)
     public ResponseEntity<ErrorResponseDTO> handleInvalidSortFieldException(InvalidSortFieldException ex, HttpServletRequest request) {
+        return buildError(ex, request);
+    }
+
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidCredentialsException(AuthException ex, HttpServletRequest request) {
         return buildError(ex, request);
     }
 }
