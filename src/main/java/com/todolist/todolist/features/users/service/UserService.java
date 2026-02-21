@@ -1,18 +1,12 @@
 package com.todolist.todolist.features.users.service;
 
-import com.todolist.todolist.features.users.repository.UserRepository;
-import com.todolist.todolist.features.users.entity.User;
+import com.todolist.todolist.features.users.dto.UserDTO;
 
-public class UserService {
+import java.util.List;
 
-    private final UserRepository userRepository;
+public interface UserService {
 
-    public UserService() {
-        this.userRepository = new UserRepository();
-    }
+    public List<UserDTO> findAll();
 
-    public User findOne(Long id) {
-        return this.userRepository.findOne(id);
-    }
-
+    public UserDTO findOne(Long id);
 }

@@ -46,6 +46,10 @@ Je suis donc parti sur ce choix.
 
 
 ## INFOS
-- Documentation Swagger disponible à cette URL : http://localhost:8080/ToDoList/swagger-ui.html 
+- Documentation Swagger disponible à cette URL : http://localhost:8080/api/swagger-ui/swagger-ui/index.html#/
 - Comme le sujet ne parlait pas de JWT, mais d'un "token simple", je n'ai pas utilisé de librairie particulière pour avoir un JWT.
 - Le logging écrit dans la console lorsqu'on lance l'application, et dans un fichier de log lorsqu'on lance les tests
+
+Vrac problèmes : 
+
+- les putains de mappers de merde mapstruct va te faire enculer

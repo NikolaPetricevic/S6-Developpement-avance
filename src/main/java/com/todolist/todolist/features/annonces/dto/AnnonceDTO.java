@@ -3,8 +3,8 @@ package com.todolist.todolist.features.annonces.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.todolist.todolist.features.annonces.enums.StatusEnum;
-import com.todolist.todolist.features.categories.entity.Category;
-import com.todolist.todolist.features.users.entity.User;
+import com.todolist.todolist.features.categories.dto.CategoryDTO;
+import com.todolist.todolist.features.users.dto.UserDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +17,7 @@ import java.sql.Timestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class AnnonceDTO {
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
@@ -41,7 +42,7 @@ public class AnnonceDTO {
     private StatusEnum status;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    private User author;
+    private UserDTO author;
 
     @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -50,7 +51,7 @@ public class AnnonceDTO {
     private Long author_id;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    private Category category;
+    private CategoryDTO category;
 
     @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
