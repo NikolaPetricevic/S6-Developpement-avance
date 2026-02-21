@@ -1,12 +1,13 @@
 package com.todolist.todolist.features.annonces.service;
 
 import com.todolist.todolist.features.annonces.dto.AnnonceDTO;
-
-import java.util.List;
+import com.todolist.todolist.features.annonces.dto.AnnonceFilterDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface AnnonceService {
 
-    public List<AnnonceDTO> findAll();
+    Page<AnnonceDTO> findAll(AnnonceFilterDTO filter, Pageable pageable);
 
     public AnnonceDTO findOne(Long id);
 

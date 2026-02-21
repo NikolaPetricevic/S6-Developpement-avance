@@ -1,27 +1,28 @@
 package com.todolist.todolist.features.annonces.service;
 
 import com.todolist.todolist.features.annonces.dto.AnnonceDTO;
+import com.todolist.todolist.features.annonces.dto.AnnonceFilterDTO;
 import com.todolist.todolist.features.annonces.entity.AnnonceEntity;
 import com.todolist.todolist.features.annonces.exceptions.AnnonceNotFoundException;
 import com.todolist.todolist.features.annonces.mapper.AnnonceMapper;
 import com.todolist.todolist.features.annonces.repository.AnnonceRepository;
+import com.todolist.todolist.features.annonces.utils.AnnonceSpecifications;
 import com.todolist.todolist.features.categories.entity.CategoryEntity;
-import com.todolist.todolist.features.categories.mapper.CategoryMapper;
 import com.todolist.todolist.features.categories.repository.CategoryRepository;
-import com.todolist.todolist.features.categories.service.CategoryService;
 import com.todolist.todolist.features.users.entity.UserEntity;
-import com.todolist.todolist.features.users.mappers.UserMapper;
 import com.todolist.todolist.features.users.repository.UserRepository;
-import com.todolist.todolist.features.users.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.todolist.todolist.features.annonces.exceptions.AuthorNotFoundException;
 import com.todolist.todolist.features.categories.exceptions.CategoryNotFoundException;
+import org.springframework.util.StringUtils;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,11 +35,29 @@ public class AnnonceServiceImpl implements AnnonceService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AnnonceDTO> findAll() {
-        return annonceRepository.findAll()
-                .stream()
-                .map(annonceMapper::toDTO)
-                .toList();
+    public Page<AnnonceDTO> findAll(AnnonceFilterDTO filter, Pageable pageable) {
+        Specification<AnnonceEntity> spec = Specification.unrestricted();
+
+        if (StringUtils.hasText(filter.getKeyword())) {
+            spec = spec.and(AnnonceSpecifications.hasKeyword(filter.getKeyword()));
+        }
+        if (filter.getStatus() != null) {
+            spec = spec.and(AnnonceSpecifications.hasStatus(filter.getStatus()));
+        }
+        if (filter.getCategoryId() != null) {
+            spec = spec.and(AnnonceSpecifications.hasCategoryId(filter.getCategoryId()));
+        }
+        if (filter.getAuthorId() != null) {
+            spec = spec.and(AnnonceSpecifications.hasAuthorId(filter.getAuthorId()));
+        }
+        if (filter.getFromDate() != null) {
+            spec = spec.and(AnnonceSpecifications.fromDate(filter.getFromDate()));
+        }
+        if (filter.getToDate() != null) {
+            spec = spec.and(AnnonceSpecifications.toDate(filter.getToDate()));
+        }
+
+        return annonceRepository.findAll(spec, pageable).map(annonceMapper::toDTO);
     }
 
     @Override

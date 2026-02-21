@@ -44,4 +44,9 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(status).body(error);
     }
+
+    @ExceptionHandler(InvalidSortFieldException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidSortFieldException(InvalidSortFieldException ex, HttpServletRequest request) {
+        return buildError(ex, request);
+    }
 }
