@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -62,6 +63,7 @@ public class AnnonceController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         annonceService.delete(id);
         return ResponseEntity.noContent().build();

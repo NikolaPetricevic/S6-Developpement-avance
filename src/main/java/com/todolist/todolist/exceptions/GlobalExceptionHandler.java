@@ -7,6 +7,7 @@ import com.todolist.todolist.features.users.exceptions.UserException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -31,6 +32,21 @@ public class GlobalExceptionHandler {
         return buildError(ex, request);
     }
 
+    @ExceptionHandler(InvalidSortFieldException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidSortFieldException(InvalidSortFieldException ex, HttpServletRequest request) {
+        return buildError(ex, request);
+    }
+
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidCredentialsException(AuthException ex, HttpServletRequest request) {
+        return buildError(ex, request);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponseDTO> handleForbidden(ForbiddenException ex, HttpServletRequest request) {
+        return buildError(ex, request);
+    }
+
     private ResponseEntity<ErrorResponseDTO> buildError(RuntimeException ex, HttpServletRequest request) {
         ResponseStatus responseStatus = ex.getClass().getAnnotation(ResponseStatus.class);
         HttpStatus status = responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
@@ -46,13 +62,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
-    @ExceptionHandler(InvalidSortFieldException.class)
-    public ResponseEntity<ErrorResponseDTO> handleInvalidSortFieldException(InvalidSortFieldException ex, HttpServletRequest request) {
-        return buildError(ex, request);
-    }
-
-    @ExceptionHandler(AuthException.class)
-    public ResponseEntity<ErrorResponseDTO> handleInvalidCredentialsException(AuthException ex, HttpServletRequest request) {
-        return buildError(ex, request);
-    }
 }

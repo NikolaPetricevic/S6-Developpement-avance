@@ -1,8 +1,11 @@
 package com.todolist.todolist.features.annonces.service;
 
+import com.todolist.todolist.exceptions.ForbiddenException;
 import com.todolist.todolist.features.annonces.dto.AnnonceDTO;
 import com.todolist.todolist.features.annonces.dto.AnnonceFilterDTO;
 import com.todolist.todolist.features.annonces.entity.AnnonceEntity;
+import com.todolist.todolist.features.annonces.enums.StatusEnum;
+import com.todolist.todolist.features.annonces.exceptions.AnnonceNotEditableException;
 import com.todolist.todolist.features.annonces.exceptions.AnnonceNotFoundException;
 import com.todolist.todolist.features.annonces.mapper.AnnonceMapper;
 import com.todolist.todolist.features.annonces.repository.AnnonceRepository;
@@ -10,11 +13,16 @@ import com.todolist.todolist.features.annonces.utils.AnnonceSpecifications;
 import com.todolist.todolist.features.categories.entity.CategoryEntity;
 import com.todolist.todolist.features.categories.repository.CategoryRepository;
 import com.todolist.todolist.features.users.entity.UserEntity;
+import com.todolist.todolist.features.users.enums.RoleEnum;
+import com.todolist.todolist.features.users.exceptions.UserNotFoundException;
 import com.todolist.todolist.features.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.todolist.todolist.features.annonces.exceptions.AuthorNotFoundException;
@@ -92,6 +100,22 @@ public class AnnonceServiceImpl implements AnnonceService {
         AnnonceEntity annonce = annonceRepository.findById(id)
                 .orElseThrow(AnnonceNotFoundException::new);
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserEntity currentUser = (UserEntity) authentication.getPrincipal();
+
+        if (!annonce.getAuthor().getId().equals(currentUser.getId()) && currentUser.getRole() != RoleEnum.ROLE_ADMIN) {
+            throw new ForbiddenException("You are not the author of this annonce.");
+        }
+
+        if ((annonce.getStatus() == StatusEnum.PUBLISHED || annonce.getStatus() == StatusEnum.ARCHIVED)
+                && currentUser.getRole() != RoleEnum.ROLE_ADMIN) {
+            throw new AnnonceNotEditableException();
+        }
+
+        if (annonceDTO.getStatus() == StatusEnum.ARCHIVED && currentUser.getRole() != RoleEnum.ROLE_ADMIN) {
+            throw new ForbiddenException("Only administrators can archive annonces.");
+        }
+
         annonce.setTitle(annonceDTO.getTitle());
         annonce.setDescription(annonceDTO.getDescription());
         annonce.setAdress(annonceDTO.getAdress());
@@ -112,10 +136,7 @@ public class AnnonceServiceImpl implements AnnonceService {
     @Override
     @Transactional
     public void delete(Long id) {
-        if (!annonceRepository.existsById(id)) {
-            throw new AnnonceNotFoundException();
-        }
-
+        annonceRepository.findById(id).orElseThrow(AnnonceNotFoundException::new);
         annonceRepository.deleteById(id);
     }
 }

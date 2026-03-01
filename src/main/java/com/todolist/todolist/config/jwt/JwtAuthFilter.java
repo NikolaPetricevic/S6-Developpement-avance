@@ -36,7 +36,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             System.out.println(authHeader);
-            System.out.println("1");
             filterChain.doFilter(request, response);
             return;
         }
@@ -44,7 +43,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         if (!jwtService.isTokenValid(token)) {
-            System.out.println("2");
             filterChain.doFilter(request, response);
             return;
         }
@@ -53,11 +51,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String username = claims.getSubject();
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            System.out.println("3");
             UserEntity user = userRepository.findByUsername(username)
                     .orElseThrow(UserNotFoundException::new);
 
-            System.out.println("4");
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     user,
