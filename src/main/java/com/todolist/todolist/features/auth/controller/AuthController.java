@@ -1,9 +1,9 @@
 package com.todolist.todolist.features.auth.controller;
 
+import com.todolist.todolist.features.auth.controller.descriptions.LoginApiDoc;
 import com.todolist.todolist.features.auth.dto.LoginRequestDTO;
 import com.todolist.todolist.features.auth.dto.LoginResponseDTO;
 import com.todolist.todolist.features.auth.service.AuthService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    @Operation(summary = "Se connecter et récupérer un token JWT")
+    @LoginApiDoc
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginRequestDTO) {
         return ResponseEntity.ok(authService.login(loginRequestDTO));
     }

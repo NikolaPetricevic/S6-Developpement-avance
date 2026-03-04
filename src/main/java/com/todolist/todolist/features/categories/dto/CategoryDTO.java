@@ -12,9 +12,10 @@ import lombok.*;
 @Data
 public class CategoryDTO {
 
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY, example = "1")
     private Long id;
 
     @NotBlank(message = "label is required")
+    @Schema(example = "Meuble")
     private String label;
 }

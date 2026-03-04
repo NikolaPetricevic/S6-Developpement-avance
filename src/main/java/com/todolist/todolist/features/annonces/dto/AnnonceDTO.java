@@ -24,27 +24,32 @@ public class AnnonceDTO {
     private Long id;
 
     @NotBlank(message = "title is required")
+    @Schema(example = "Mon Annonce")
     private String title;
 
     @NotBlank(message = "description is required")
+    @Schema(example = "Super annonce, contactez-moi vite")
     private String description;
 
     @NotBlank(message = "adress is required")
+    @Schema(example = "rue de l'Annonce")
     private String adress;
 
     @NotBlank(message = "mail is required")
+    @Schema(example = "example@mail.com")
     private String mail;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Timestamp date;
 
     @NotNull(message = "status is required")
+    @Schema(example = "DRAFT")
     private StatusEnum status;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private UserDTO author;
 
-    @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
+    @Schema(accessMode = Schema.AccessMode.WRITE_ONLY, example = "1")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull(message = "author_id is required")
@@ -53,7 +58,7 @@ public class AnnonceDTO {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private CategoryDTO category;
 
-    @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
+    @Schema(accessMode = Schema.AccessMode.WRITE_ONLY, example = "1")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull(message = "category_id is required")

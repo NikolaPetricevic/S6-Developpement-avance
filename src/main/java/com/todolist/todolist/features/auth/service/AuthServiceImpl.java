@@ -1,5 +1,6 @@
 package com.todolist.todolist.features.auth.service;
 
+import com.todolist.todolist.features.auth.controller.descriptions.LoginApiDoc;
 import com.todolist.todolist.features.auth.dto.LoginRequestDTO;
 import com.todolist.todolist.features.auth.dto.LoginResponseDTO;
 import com.todolist.todolist.features.auth.exceptions.InvalidCredentialsException;

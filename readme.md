@@ -53,3 +53,5 @@ Je suis donc parti sur ce choix.
 Vrac problèmes : 
 
 - les putains de mappers de merde mapstruct va te faire enculer
+- H2 au lieu de testcontainers : je n'arrivais pas à faire fonctionner les testcontainers sur ma machine +
+on n'utilise pas de fonction spécifique à postgre, donc ça ne devrait pas poser problème

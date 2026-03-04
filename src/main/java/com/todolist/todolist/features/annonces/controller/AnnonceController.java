@@ -1,5 +1,6 @@
 package com.todolist.todolist.features.annonces.controller;
 
+import com.todolist.todolist.features.annonces.controller.descriptions.*;
 import com.todolist.todolist.features.annonces.dto.AnnonceDTO;
 import com.todolist.todolist.features.annonces.dto.AnnonceFilterDTO;
 import com.todolist.todolist.features.annonces.service.AnnonceService;
@@ -29,6 +30,7 @@ public class AnnonceController {
     private final AnnonceSortValidator annonceSortValidator;
 
     @GetMapping
+    @FindAllAnnoncesApiDoc
     public ResponseEntity<Page<AnnonceDTO>> findAll(
             @ModelAttribute AnnonceFilterDTO filter,
             @RequestParam(defaultValue = "0") int page,
@@ -48,22 +50,26 @@ public class AnnonceController {
     }
 
     @GetMapping("/{id}")
+    @FindOneAnnonceApiDoc
     public ResponseEntity<AnnonceDTO> findOne(@PathVariable Long id) {
         return ResponseEntity.ok(annonceService.findOne(id));
     }
 
     @PostMapping
+    @CreateAnnonceApiDoc
     public ResponseEntity<AnnonceDTO> create(@RequestBody @Valid AnnonceDTO annonceDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(annonceService.create(annonceDTO));
     }
 
     @PutMapping("/{id}")
+    @UpdateAnnonceApiDoc
     public ResponseEntity<AnnonceDTO> update(@PathVariable Long id, @RequestBody @Valid AnnonceDTO annonceDTO) {
         return ResponseEntity.ok(annonceService.update(id, annonceDTO));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteAnnonceApiDoc
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         annonceService.delete(id);
         return ResponseEntity.noContent().build();
